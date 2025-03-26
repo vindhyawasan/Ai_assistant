@@ -45,13 +45,27 @@ def takecommand():
         return None
     return query
 
-def sendemail(to,content):
-    server = smtplib.SMTP('smtp.gmail.com',587)
-    server.ehlo()
-    server.starttls()
-    server.login("examples12er@gmail.com","hbjc putx sbbd taym")
-    sendemail(to,content)
-    # server.close()
+def sendemail(to, content):
+    try:
+        sender_email = "examples12er@gmail.com"
+        sender_password = "hbjc putx sbbd taym"  # Use environment variables instead
+
+        # Setting up SMTP connection
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
+        server.starttls()
+        server.login(sender_email, sender_password)
+
+        # Formatting email
+        # message = f"Subject: Automated Email\n\n{content}"
+        server.sendmail(sender_email, to, content)
+
+        # Closing connection
+        server.close()
+        print("Email sent successfully!")
+    
+    except Exception as e:
+        print(f"Error: {e}")
 if __name__ == "__main__":
     # speech("Shivam is a good boy")
     wishme()
@@ -60,12 +74,20 @@ if __name__ == "__main__":
         query = takecommand().lower()
         #logic for executing task based on query
         if "wikipedia" in query:
-            speech("Searching Wikipedia")
-            query = query.replace("wikipedia","")
-            result = wikipedia.summary(query,sentences =2)
-            speech("According to Wikipedia....")
-            print(result)
-            speech(result)
+            try:
+                speech("Searching Wikipedia")
+                query = query.replace("wikipedia", "").strip()  # Remove 'wikipedia' and extra spaces
+
+                if not query:
+                    speech("Please specify a topic to search.")
+
+
+                result = wikipedia.summary(query, sentences=2)  # Get summary
+                speech("According to Wikipedia...")
+                print(result)
+                speech(result)
+            except Exception:
+                pass
         elif 'open youtube' in query:
             webbrowser.open("youtube.com")
         elif 'open gmail' in query:
@@ -94,14 +116,13 @@ if __name__ == "__main__":
         elif 'open visual studio' in query:
             open = "C:\\Users\\SHIVAM\\AppData\\Local\\Programs\\Microsoft VS Code\\code.exe"
             os.startfile(open)
-        elif 'send email' in query:
+        if "send email" in query:
             try:
-                speech("What should i say")
+                speech("What should I say?")
                 content = takecommand()
-                to = "asingh128ve@gmail.com"
-                sendemail(to,content)
-                speech("E-mail has been send")
+                to = "asingh128ve@gmail.com"  # Replace with recipient email
+                sendemail(to, content)
             except Exception as e:
                 print(e)
-                speech("We not able to sand email, phir sa bheju email")
+                speech("Sorry, I was unable to send the email.")
             
